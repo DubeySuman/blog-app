@@ -1,0 +1,40 @@
+---
+// New Blog Post Page
+---
+
+<html>
+  <head>
+    <title>New Blog Post</title>
+  </head>
+  <body class="bg-gray-50 min-h-screen">
+    <main class="max-w-2xl mx-auto py-12 px-4">
+      <h1 class="text-3xl font-bold mb-6">Add a New Blog Post</h1>
+      <form class="space-y-6 bg-white p-6 rounded-xl shadow" id="new-post-form" method="post" action="/api/new-post" enctype="multipart/form-data">
+        <div>
+          <label class="block font-medium mb-1" for="title">Title</label>
+          <input class="w-full border border-gray-300 rounded px-3 py-2" type="text" id="title" name="title" required />
+        </div>
+        <div>
+          <label class="block font-medium mb-1" for="category">Category</label>
+          <input class="w-full border border-gray-300 rounded px-3 py-2" type="text" id="category" name="category" required />
+        </div>
+        <div>
+          <label class="block font-medium mb-1" for="content">Content</label>
+          <textarea class="w-full border border-gray-300 rounded px-3 py-2 min-h-[200px]" id="content" name="content" required></textarea>
+        </div>
+        <div>
+          <label class="block font-medium mb-1" for="image">Image/Attachment</label>
+          <input type="file" id="image" name="image" accept="image/*,application/pdf" />
+        </div>
+        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Publish</button>
+      </form>
+      <script>
+        // Placeholder: Show alert on submit
+        document.getElementById('new-post-form').addEventListener('submit', function(e) {
+          e.preventDefault();
+          alert('Blog post submitted! (Backend integration required)');
+        });
+      </script>
+    </main>
+  </body>
+</html>
