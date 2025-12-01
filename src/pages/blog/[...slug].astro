@@ -1,0 +1,47 @@
+---
+import { type CollectionEntry, getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('blog');
+	return posts.map((post) => ({
+		params: { slug: post.slug },
+		props: post,
+	}));
+}
+type Props = CollectionEntry<'blog'>;
+
+const post = Astro.props;
+const { Content } = await post.render();
+---
+
+<Layout title={post.data.title} description={post.data.description}>
+	<article class="py-16 px-4 sm:px-6">
+		<div class="max-w-3xl mx-auto">
+			<div class="mb-8 text-center">
+				<div class="flex items-center justify-center gap-3 text-sm text-slate-500 dark:text-slate-400 mb-4">
+					<FormattedDate date={post.data.pubDate} />
+					<span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+					<a href={`/category/${post.data.category}`} class="text-primary-500 hover:underline font-medium">
+						{post.data.category}
+					</a>
+				</div>
+				<h1 class="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white tracking-tight mb-6">
+					{post.data.title}
+				</h1>
+				{post.data.heroImage && (
+					<img
+						src={post.data.heroImage}
+						alt=""
+						class="w-full aspect-video object-cover rounded-2xl shadow-lg mb-8"
+					/>
+				)}
+			</div>
+			
+			<div class="prose prose-lg prose-slate dark:prose-invert mx-auto">
+				<Content />
+			</div>
+		</div>
+	</article>
+</Layout>

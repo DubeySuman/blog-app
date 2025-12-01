@@ -1,0 +1,27 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog');
+const categories = [...new Set(posts.map((post) => post.data.category))];
+---
+
+<Layout title="MyBlog - Categories">
+	<section class="py-20 px-4 sm:px-6 max-w-4xl mx-auto">
+		<h1 class="text-4xl font-bold text-slate-900 dark:text-white mb-12">Categories</h1>
+		<div class="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+			{
+				categories.map((category) => (
+					<a href={`/category/${category}`} class="group p-6 bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-2xl hover:shadow-lg hover:border-primary-500 dark:hover:border-primary-500 transition-all duration-300">
+						<h2 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-primary-500 transition-colors">
+							{category}
+						</h2>
+						<p class="text-slate-500 dark:text-slate-400 mt-2">
+							{posts.filter(p => p.data.category === category).length} posts
+						</p>
+					</a>
+				))
+			}
+		</div>
+	</section>
+</Layout>
