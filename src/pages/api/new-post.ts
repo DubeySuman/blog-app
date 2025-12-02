@@ -2,22 +2,20 @@ import type { APIRoute } from 'astro';
 import { initializeApp, cert, getApps } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 
-// Only initialize once
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT!);
+
 if (!getApps().length) {
     initializeApp({
-        credential: cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT as string)),
+        credential: cert(serviceAccount),
     });
 }
 
 const db = getFirestore();
 
-export const post: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request }) => {
     try {
-        const formData = await request.formData();
-        const title = formData.get('title');
-        const category = formData.get('category');
-        const content = formData.get('content');
-        // TODO: handle file uploads (image/attachment)
+        const data = await request.json();
+        const { title, category, content } = data;
 
         if (!title || !category || !content) {
             return new Response(JSON.stringify({ error: 'Missing fields' }), { status: 400 });
