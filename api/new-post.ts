@@ -38,6 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const body = await parseBody(req);
         const { title, category, content } = body as any;
         if (!title || !category || !content) {
+            console.error('Missing fields:', { title, category, content });
             res.status(400).json({ error: 'Missing fields' });
             return;
         }
@@ -47,8 +48,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             content,
             createdAt: new Date().toISOString(),
         });
+        console.log('Blog post saved:', docRef.id);
         res.status(200).json({ id: docRef.id });
     } catch (err) {
+        console.error('API error:', err);
         res.status(500).json({ error: 'Failed to save post', details: String(err) });
     }
 }
