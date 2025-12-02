@@ -1,4 +1,3 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import { initializeApp, cert, getApps } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 
@@ -13,7 +12,7 @@ if (!getApps().length) {
 const db = getFirestore();
 
 // Helper to parse JSON body in Vercel serverless functions
-async function parseBody(req: NextApiRequest) {
+async function parseBody(req: any) {
     return new Promise((resolve, reject) => {
         let body = '';
         req.on('data', (chunk: Buffer) => {
@@ -29,9 +28,11 @@ async function parseBody(req: NextApiRequest) {
     });
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: any, res: any) {
     if (req.method !== 'POST') {
-        res.status(405).json({ error: 'Method not allowed' });
+        res.statusCode = 405;
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ error: 'Method not allowed' }));
         return;
     }
     try {
@@ -39,7 +40,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const { title, category, content } = body as any;
         if (!title || !category || !content) {
             console.error('Missing fields:', { title, category, content });
-            res.status(400).json({ error: 'Missing fields' });
+            res.statusCode = 400;
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ error: 'Missing fields' }));
             return;
         }
         const docRef = await db.collection('posts').add({
@@ -49,9 +52,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             createdAt: new Date().toISOString(),
         });
         console.log('Blog post saved:', docRef.id);
-        res.status(200).json({ id: docRef.id });
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ id: docRef.id }));
     } catch (err) {
         console.error('API error:', err);
-        res.status(500).json({ error: 'Failed to save post', details: String(err) });
+        res.statusCode = 500;
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ error: 'Failed to save post', details: String(err) }));
     }
 }
