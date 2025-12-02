@@ -9,7 +9,7 @@
   <body class="bg-gray-50 min-h-screen">
     <main class="max-w-2xl mx-auto py-12 px-4">
       <h1 class="text-3xl font-bold mb-6">Add a New Blog Post</h1>
-      <form class="space-y-6 bg-white p-6 rounded-xl shadow" id="new-post-form" method="post" action="/api/new-post" enctype="multipart/form-data">
+      <form class="space-y-6 bg-white p-6 rounded-xl shadow" id="new-post-form">
         <div>
           <label class="block font-medium mb-1" for="title">Title</label>
           <input class="w-full border border-gray-300 rounded px-3 py-2" type="text" id="title" name="title" required />
@@ -29,10 +29,26 @@
         <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Publish</button>
       </form>
       <script>
-        // Placeholder: Show alert on submit
-        document.getElementById('new-post-form').addEventListener('submit', function(e) {
+        document.getElementById('new-post-form').addEventListener('submit', async function(e) {
           e.preventDefault();
-          alert('Blog post submitted! (Backend integration required)');
+          const form = e.target;
+          const data = {
+            title: form.title.value,
+            category: form.category.value,
+            content: form.content.value
+          };
+          const response = await fetch('/api/new-post', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+          if (response.ok) {
+            alert('Blog post submitted successfully!');
+            form.reset();
+          } else {
+            const err = await response.json();
+            alert('Error: ' + (err.error || 'Failed to submit blog post'));
+          }
         });
       </script>
     </main>
