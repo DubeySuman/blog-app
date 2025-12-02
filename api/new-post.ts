@@ -12,13 +12,31 @@ if (!getApps().length) {
 
 const db = getFirestore();
 
+// Helper to parse JSON body in Vercel serverless functions
+async function parseBody(req: NextApiRequest) {
+    return new Promise((resolve, reject) => {
+        let body = '';
+        req.on('data', (chunk: Buffer) => {
+            body += chunk;
+        });
+        req.on('end', () => {
+            try {
+                resolve(JSON.parse(body));
+            } catch (e) {
+                reject(e);
+            }
+        });
+    });
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'POST') {
         res.status(405).json({ error: 'Method not allowed' });
         return;
     }
     try {
-        const { title, category, content } = req.body;
+        const body = await parseBody(req);
+        const { title, category, content } = body as any;
         if (!title || !category || !content) {
             res.status(400).json({ error: 'Missing fields' });
             return;
