@@ -7,7 +7,7 @@ import vercel from '@astrojs/vercel/serverless';
 // https://astro.build/config
 export default defineConfig({
   integrations: [keystatic()],
-  adapter: vercel(),
+  adapter: vercel({}),
   devToolbar: {
     enabled: false
   }
